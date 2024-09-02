@@ -1,0 +1,291 @@
+schema {
+  query: Query
+}
+
+directive @complexity(multipliers: [String!], value: Int!) on FIELD_DEFINITION
+
+type City {
+  """
+  The ISO Alpha-2 code designated to the
+  country where the city is located.
+  """
+  country_code: String!
+  """The id of the country where the city is located."""
+  country_id: Int!
+  """The id of the city."""
+  id: Int!
+  """The latitude coordinate of the city."""
+  latitude: Float!
+  """The longitude coordinate of the city."""
+  longitude: Float!
+  """The name of the city."""
+  name: String!
+  """
+  The code designated to the state where
+  the city is located.
+  """
+  state_code: String!
+  """The id of the state where the city is located."""
+  state_id: Int!
+}
+
+type CityConnection {
+  edges: [CityEdge!]!
+  pageInfo: PageInfo!
+  totalCount: Int!
+}
+
+type CityEdge {
+  """A cursor for use in the pagination."""
+  cursor: String!
+  """The item at the end of the edge."""
+  node: City!
+}
+
+input CityFilterInput {
+  """Filter by country ISO Alpha-2 code."""
+  ciso2: ID!
+  """Filter by state id within the supplied csio2."""
+  sid: Int
+  """Filter by state code within the supplied csio2."""
+  siso: String
+}
+
+type Country {
+  """The capital city of the country."""
+  capital: String!
+  """Get a list of cities within the country."""
+  cities(filter: CountryCitiesFilterInput, page: PaginationInput): CityConnection!
+  """The currency of the country."""
+  currency: String!
+  """The currency symbol of the country."""
+  currency_symbol: String!
+  """The emoji flag of the country."""
+  emoji: String!
+  """The unicode of the country's emoji flag."""
+  emojiU: String!
+  """The id of the country."""
+  id: Int!
+  """
+  The two-letter code (ISO Alpha-2) designated to the country.
+  Examples: US (for United States), and PH (for Philippines).
+  """
+  iso2: ID!
+  """
+  The three-letter code (ISO Alpha-2) designated to the country.
+  Examples: USA (for United States), and PHL (for Philippines).
+  """
+  iso3: ID!
+  """The latitude coordinate of the country."""
+  latitude: Float!
+  """The longitude coordinate of the country."""
+  longitude: Float!
+  """The name of the country."""
+  name: String!
+  """The native name of the country."""
+  native: String!
+  """
+  The three-digit code (ISO numeric) designated to the country.
+  Examples: 236 (for United States), and 020 (for Andora).
+  """
+  numeric_code: ID!
+  """The dialing code of the country."""
+  phone_code: String!
+  """The region where the country is located."""
+  region: String!
+  """Get a list of states/provinces/regions within the country."""
+  states(page: PaginationInput): StateConnection!
+  """The subregion where the country is located."""
+  subregion: String!
+  """The timezones in the country."""
+  timezones: [Timezone!]!
+  """The top-level domain of the country."""
+  tld: String!
+  """The translation of the country's name in several languages."""
+  translations: JSONObject!
+}
+
+input CountryCitiesFilterInput {
+  """Filter by state id."""
+  sid: Int
+  """Filter by state code."""
+  siso: String
+}
+
+type CountryConnection {
+  edges: [CountryEdge!]!
+  pageInfo: PageInfo!
+  totalCount: Int!
+}
+
+type CountryEdge {
+  """A cursor for use in the pagination."""
+  cursor: String!
+  """The item at the end of the edge."""
+  node: Country!
+}
+
+input CountryFilterInput {
+  """Filter by region."""
+  region: Region
+  """Filter by subregion."""
+  subregion: Subregion
+}
+
+"""
+The `JSON` scalar type represents JSON values as specified by [ECMA-404](http://www.ecma-international.org/publications/files/ECMA-ST/ECMA-404.pdf).
+"""
+scalar JSON
+
+"""
+The `JSONObject` scalar type represents JSON objects as specified by [ECMA-404](http://www.ecma-international.org/publications/files/ECMA-ST/ECMA-404.pdf).
+"""
+scalar JSONObject
+
+type PageInfo {
+  """The cursor to continue when paginating forward."""
+  endCursor: String
+  """
+  Indicates whether more edges exist,
+  when paginating forward.
+  """
+  hasNextPage: Boolean!
+  """
+  Indicates whether more edges exist,
+  when paginating backwards.
+  """
+  hasPreviousPage: Boolean!
+  """The cursor to continue when paginating backward."""
+  startCursor: String
+}
+
+input PaginationInput {
+  """Returns the elements that come after the specified cursor."""
+  after: String
+  """Returns the elements that come before the specified cursor."""
+  before: String
+  """Returns the first n elements."""
+  first: Int
+  """Returns the last n elements."""
+  last: Int
+}
+
+type Query {
+  """Get a list of cities."""
+  cities(filter: CityFilterInput, page: PaginationInput): CityConnection!
+  """Get a specific city by id."""
+  city(id: Int!): City
+  """Get a list of countries."""
+  countries(filter: CountryFilterInput, page: PaginationInput): CountryConnection!
+  """Get a specific country by id, iso2, iso3, or numeric_code."""
+  country(id: Int, iso2: ID, iso3: ID, numeric_code: ID): Country
+  """Get a specific state by id or by state_code and country_code pair."""
+  state(id: Int, locationCode: StateCountryCodeInput): State
+  """Get a list of states/provinces/regions."""
+  states(filter: StateFilterInput, page: PaginationInput): StateConnection!
+}
+
+enum Region {
+  Africa
+  Americas
+  Antarctica
+  Asia
+  Europe
+  Oceania
+}
+
+type State {
+  """Get a list of cities within the state."""
+  cities(page: PaginationInput): CityConnection!
+  """
+  The ISO Alpha-2 code designated to the
+  country where the state is located.
+  """
+  country_code: String!
+  """
+  The id of the country where the
+  state is located.
+  """
+  country_id: Int!
+  """The id of the state."""
+  id: Int!
+  """The latitude coordinate of the state."""
+  latitude: Float
+  """The longitude coordinate of the state."""
+  longitude: Float
+  """The name of the state."""
+  name: String!
+  """
+  The code designated to the state.
+  Code is unique within the country.
+  """
+  state_code: String!
+}
+
+type StateConnection {
+  edges: [StateEdge!]!
+  pageInfo: PageInfo!
+  totalCount: Int!
+}
+
+input StateCountryCodeInput {
+  country_code: String!
+  state_code: String!
+}
+
+type StateEdge {
+  """A cursor for use in the pagination."""
+  cursor: String!
+  """The item at the end of the edge."""
+  node: State!
+}
+
+input StateFilterInput {
+  """Filter by country id"""
+  cid: Int
+  """Filter by country code"""
+  ciso2: String
+}
+
+enum Subregion {
+  Antarctica
+  Australia_and_New_Zealand
+  Caribbean
+  Central_America
+  Central_Asia
+  Eastern_Africa
+  Eastern_Asia
+  Eastern_Europe
+  Indian_Ocean
+  Melanesia
+  Micronesia
+  Middle_Africa
+  Northern_Africa
+  Northern_America
+  Northern_Europe
+  Polynesia
+  South_America
+  South_Atlantic_Ocean
+  South_Eastern_Asia
+  Southern_Africa
+  Southern_Asia
+  Southern_Europe
+  Western_Africa
+  Western_Asia
+  Western_Europe
+}
+
+type Timezone {
+  """The abbreviation of the timezone name."""
+  abbreviation: String!
+  """The id of the country under the timezone."""
+  country_id: Int!
+  """The Greenwich Mean Time offset in seconds."""
+  gmt_offset: Int!
+  """Greenwich Mean Time offset name."""
+  gmt_offset_name: String!
+  """The name of the timezone."""
+  timezone_name: String!
+  """The zone name."""
+  zone_name: String!
+}
