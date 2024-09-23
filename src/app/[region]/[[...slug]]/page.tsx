@@ -21,7 +21,7 @@ type RegionFieldToUpdate = {
 export default async function Routes(
   { params }: {
     params: {
-      region: any
+      region: Region
       slug: string[]
     },
   }) {
